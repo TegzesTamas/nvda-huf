@@ -105,21 +105,18 @@ $(document).ready(function () {
             config
         );
 
-        startDateInput.addEventListener("input", function () {
+        const updateChartInterval = function () {
             const data = getChartData(map, startDateInput.value, endDateInput.value)
-            myChart.data = data;
+            myChart.data.labels = data.labels;
+            for (let i = 0; i < data.datasets.length; ++i) {
+                myChart.data.datasets[i].data = data.datasets[i].data;
+            }
             myChart.update();
-        })
+        }
 
-        endDateInput.addEventListener("input", function () {
-            const data = getChartData(map, startDateInput.value, endDateInput.value)
-            // myChart.data.labels = data.labels;
-            // for (let i = 0; i < data.datasets.length; ++i) {
-            //     myChart.data.datasets[i].data = data.datasets[i].data;
-            // }
-            myChart.data = data;
-            myChart.update();
-        })
+        startDateInput.addEventListener("input", updateChartInterval)
+
+        endDateInput.addEventListener("input", updateChartInterval)
 
     });
 

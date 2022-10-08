@@ -112,5 +112,5 @@ fun main() {
         .get("/json") { ctx ->
             ctx.result(getNvdaHuf(apiKey).inputStream())
         }
-        .start(8080)
+        .start(80)
 }

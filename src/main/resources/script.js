@@ -54,7 +54,14 @@ $(document).ready(function () {
         startDateInput.setAttribute("max", maxDate)
         endDateInput.setAttribute("min", minDate)
         endDateInput.setAttribute("max", maxDate)
-        endDateInput.value = maxDate;
+        endDate = new Date(maxDate);
+        startDate = new Date(endDate);
+        startDate.setMonth(endDate.getMonth() - 1);
+        if (startDate.getMonth() == endDate.getMonth()) {
+            startDate.setDate(0);
+        }
+        endDateInput.value = endDate.toLocaleDateString("en-CA")
+        startDateInput.value = startDate.toLocaleDateString("en-CA");
 
         const data = getChartData(map, startDateInput.value, endDateInput.value)
 

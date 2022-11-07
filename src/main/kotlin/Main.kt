@@ -31,7 +31,7 @@ fun getNvdaHuf(apikey: String): File {
     val nvdaHufFile = File("${today}_nvdahuf.json")
     if (!nvdaHufFile.exists()) {
         val nvdaUrl = URL(
-            "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NVDA&outputsize=full&apikey=$apikey"
+            "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=NVDA&outputsize=full&apikey=$apikey"
         )
         val nvdaUsdRaw = mapper.readValue(nvdaUrl, Map::class.java)
         val nvdaUsdTimeSeries = nvdaUsdRaw["Time Series (Daily)"] as? Map<*, *>
@@ -45,7 +45,7 @@ fun getNvdaHuf(apikey: String): File {
                     it
                 }
             }
-            ?.toMap()
+            ?.toMap()?:error("Could not get NVDA-USD data")
 
         val usdHufUrl = URL(
             "https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=USD&to_symbol=HUF&outputsize=full&apikey=$apikey"
@@ -55,11 +55,7 @@ fun getNvdaHuf(apikey: String): File {
         val usdHuf = usdHufTimeSeries
             ?.asSequence()
             ?.mapNotNull { parseTimeSeriesEntry(it) }
-            ?.toMap()
-
-        if (nvdaUsd == null || usdHuf == null) {
-            error("asdf")
-        }
+            ?.toMap()?:error("Could not get USD-HUF data")
 
         val dates = nvdaUsd.keys + usdHuf.keys
         val nvdaHuf = NvdaHufTimeSeries(
@@ -110,7 +106,12 @@ fun main() {
             }
         }
         .get("/json") { ctx ->
-            ctx.result(getNvdaHuf(apiKey).inputStream())
+            try {
+                ctx.result(getNvdaHuf(apiKey).inputStream())
+            } catch (e : IllegalStateException) {
+                ctx.status(500)
+                ctx.result(e.message?:"Unknown error")
+            }
         }
         .start(80)
 }

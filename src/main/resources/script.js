@@ -60,8 +60,8 @@ $(document).ready(function () {
         if (startDate.getMonth() == endDate.getMonth()) {
             startDate.setDate(0);
         }
-        endDateInput.value = endDate.toLocaleDateString("en-CA")
-        startDateInput.value = startDate.toLocaleDateString("en-CA");
+        endDateInput.value = endDate.toISOString().split('T')[0]
+        startDateInput.value = startDate.toISOString().split('T')[0]
 
         const data = getChartData(map, startDateInput.value, endDateInput.value)
 

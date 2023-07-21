@@ -31,7 +31,7 @@ fun getNvdaHuf(apikey: String): File {
     val nvdaHufFile = File("${today}_nvdahuf.json")
     if (!nvdaHufFile.exists()) {
         val nvdaUrl = URL(
-            "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=NVDA&outputsize=full&apikey=$apikey"
+            "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NVDA&outputsize=full&apikey=$apikey"
         )
         val nvdaUsdRaw = mapper.readValue(nvdaUrl, Map::class.java)
         val nvdaUsdTimeSeries = nvdaUsdRaw["Time Series (Daily)"] as? Map<*, *>

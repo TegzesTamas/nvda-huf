@@ -39,10 +39,10 @@ fun getNvdaHuf(apikey: String): File {
             ?.asSequence()
             ?.mapNotNull { parseTimeSeriesEntry(it) }
             ?.map {
-                if (it.first < "2021-07-20") {
-                    it.first to it.second / 4
-                } else {
-                    it
+                when {
+                    it.first < "2021-07-20" -> it.first to it.second / 40
+                    it.first < "2024-06-10" -> it.first to it.second / 10
+                    else                    -> it
                 }
             }
             ?.toMap()?:error("Could not get NVDA-USD data")
